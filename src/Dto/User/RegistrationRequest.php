@@ -1,11 +1,11 @@
 <?php
-// src/Dto/RegistrationRequest.php
-namespace App\Dto;
+
+namespace App\Dto\User;
 
 use App\Validator\Constraints\UniqueUsername;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class RegistrationRequest
+class RegistrationRequest implements UserRequestInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Le nom d’utilisateur est requis.')]
@@ -27,5 +27,22 @@ class RegistrationRequest
         #[Assert\EqualTo(propertyPath: 'plainPassword', message: 'Les mots de passe doivent correspondre.')]
         public readonly string $confirmPassword,
     ) {
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Mapper;
 
-use App\Dto\RegistrationRequest;
+use App\Dto\User\UserRequestInterface;
 use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -13,20 +13,24 @@ class UserMapper
     ) {
     }
 
-    public function map(RegistrationRequest $dto, ?User $user): User
+    public function map(UserRequestInterface $dto, ?User $user): User
     {
         $user ??= new User();
 
-        $user
-            ->setUsername($dto->username)
-            ->setFirstName($dto->firstName)
-            ->setLastName($dto->lastName)
-            ->setPassword(
-                $this->hasher->hashPassword(
-                    $user,
-                    $dto->plainPassword,
-                ),
-            );
+        if (null !== $dto->getUsername()) {
+            $user->setUsername($dto->getUsername());
+        }
+        if (null !== $dto->getFirstName()) {
+            $user->setFirstName($dto->getFirstName());
+        }
+        if (null !== $dto->getLastName()) {
+            $user->setLastName($dto->getLastName());
+        }
+
+        if (null !== $dto->getPlainPassword()) {
+            $hashed = $this->hasher->hashPassword($user, $dto->getPlainPassword());
+            $user->setPassword($hashed);
+        }
 
         return $user;
     }

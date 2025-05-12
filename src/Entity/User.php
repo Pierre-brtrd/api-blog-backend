@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'This username is already in use.')]
@@ -19,15 +20,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['common:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(['user:read'])]
     private string $username;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['user:read'])]
     private ?string $firstName = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['user:read'])]
     private ?string $lastName = null;
 
     #[ORM\Column(type: 'json')]
@@ -66,6 +71,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getLastName(): ?string
     {
         return $this->lastName;
+    }
+
+    #[Groups(['user:read'])]
+    public function getFullName(): ?string
+    {
+        return "$this->firstName $this->lastName";
     }
 
     public function setLastName(?string $lastName): static

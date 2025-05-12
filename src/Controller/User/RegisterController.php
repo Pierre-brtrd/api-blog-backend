@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\User;
 
-use App\Dto\RegistrationRequest;
+use App\Dto\User\RegistrationRequest;
 use App\Mapper\UserMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;

@@ -11,13 +11,9 @@ lexik_jwt_authentication:
             name: Authorization
 
         cookie:
-            enabled: true
-            name: BEARER
-            
-    set_cookies:
-        BEARER: ~
+            enabled: false
 
-    remove_token_from_body_when_cookies_used: true
+    set_cookies: []
 
     blocklist_token:
         enabled: true

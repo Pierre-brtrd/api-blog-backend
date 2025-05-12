@@ -8,5 +8,6 @@ interface ArticleRequestInterface
 {
     public function getTitle(): ?string;
     public function getContent(): ?string;
-    public function getUser(): ?User;
+    public function getUserId(): ?int;
+    public function isEnabled(): ?bool;
 }

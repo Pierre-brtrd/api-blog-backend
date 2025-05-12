@@ -110,7 +110,7 @@ class UserController extends AbstractController
             $this->getUser(),
             Response::HTTP_OK,
             [],
-            ['groups' => ['user:read', 'common:read', 'article:index']]
+            ['groups' => ['user:read', 'common:read']]
         );
     }
 

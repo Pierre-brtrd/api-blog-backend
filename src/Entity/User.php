@@ -22,11 +22,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['common:read'])]
+    #[Groups(['common:read', 'article:index'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'article:index'])]
     private string $username;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -47,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Article>
      */
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'user')]
-    #[Groups(['user:read', 'article:index'])]
+    #[Groups(['user:read'])]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $articles;
 

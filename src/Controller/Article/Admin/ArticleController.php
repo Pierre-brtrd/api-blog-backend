@@ -12,10 +12,13 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints\Image;
 
 #[OA\Tag(name: 'Article')]
 #[Route('/api/admin/article', name: 'api_article')]
@@ -198,6 +201,34 @@ final class ArticleController extends AbstractController
     public function delete(Article $article): JsonResponse
     {
         $this->em->remove($article);
+        $this->em->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/{id}/upload', name: '_upload', methods: ['POST'])]
+    public function uploadFile(
+        Article $article,
+        #[MapUploadedFile([
+            new Image(
+                maxSize: '8M',
+                maxSizeMessage: 'The image is too large. Maximum size is {{ limit }} {{ suffix }}.',
+                mimeTypes: [
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'image/webp',
+                    'image/svg+xml',
+                ],
+                detectCorrupted: true,
+            ),
+        ]
+        )]
+        UploadedFile $image
+    ): JsonResponse {
+        $article->setImageFile($image);
+
+        $this->em->persist($article);
         $this->em->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);

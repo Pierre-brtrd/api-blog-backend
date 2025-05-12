@@ -115,6 +115,50 @@ final class ArticleController extends AbstractController
         return $this->json(['id' => $article->getId()], Response::HTTP_CREATED);
     }
 
+    #[OA\Patch(
+        summary: 'Update an article',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Article updated',
+                content: new OA\JsonContent(
+                    ref: new Model(
+                        type: Article::class,
+                        groups: ['article:index', 'common:read']
+                    )
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Article not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'int'),
+                        new OA\Property(property: 'detail', type: 'string'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Validation error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'title', type: 'string', example: 'Validation Error'),
+                        new OA\Property(property: 'detail', type: 'string'),
+                        new OA\Property(property: 'status', type: 'number', example: 422),
+                        new OA\Property(property: 'violations', type: 'array', items: new OA\Items(
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'propertyPath', type: 'string'),
+                                new OA\Property(property: 'title', type: 'string'),
+                            ],
+                        )),
+                    ],
+                ),
+            ),
+        ]
+    )]
+    #[Security(name: 'Bearer')]
     #[Route('/{id}', name: '_update', methods: ['PATCH'])]
     public function update(
         #[MapRequestPayload()]
@@ -128,5 +172,34 @@ final class ArticleController extends AbstractController
         return $this->json($article, Response::HTTP_OK, [], [
             'groups' => ['article:index', 'common:read'],
         ]);
+    }
+
+    #[OA\Delete(
+        summary: 'Delete an article',
+        responses: [
+            new OA\Response(
+                response: 204,
+                description: 'Article deleted',
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Article not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'int'),
+                        new OA\Property(property: 'detail', type: 'string'),
+                    ],
+                ),
+            ),
+        ]
+    )]
+    #[Security(name: 'Bearer')]
+    #[Route('/{id}', name: '_delete', methods: ['DELETE'])]
+    public function delete(Article $article): JsonResponse
+    {
+        $this->em->remove($article);
+        $this->em->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }

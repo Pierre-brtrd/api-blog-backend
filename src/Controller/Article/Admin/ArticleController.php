@@ -3,11 +3,11 @@
 namespace App\Controller\Article\Admin;
 
 use App\Dto\Article\CreateArticleRequest;
+use App\Entity\Article;
 use App\Mapper\ArticleMapper;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use function React\Promise\resolve;
-
+use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +27,25 @@ final class ArticleController extends AbstractController
     ) {
     }
 
+    #[OA\Get(
+        summary: 'Get all articles',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Articles found',
+                content: new OA\JsonContent(
+                    type: 'array',
+                    items: new OA\Items(
+                        ref: new Model(
+                            type: Article::class,
+                            groups: ['article:index', 'common:read']
+                        )
+                    )
+                ),
+            ),
+        ]
+    )]
+    #[Security(name: 'Bearer')]
     #[Route('', name: '_index', methods: ['GET'])]
     public function index(): JsonResponse
     {
@@ -84,9 +103,7 @@ final class ArticleController extends AbstractController
     #[Security(name: 'Bearer')]
     #[Route('', name: '_create', methods: ['POST'])]
     public function create(
-        #[MapRequestPayload(
-            serializationContext: ['groups' => ['article:write']],
-        )]
+        #[MapRequestPayload()]
         CreateArticleRequest $dto,
     ): JsonResponse {
         $article = $this->articleMapper->map($dto, null);

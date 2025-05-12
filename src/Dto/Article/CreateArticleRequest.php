@@ -2,9 +2,7 @@
 
 namespace App\Dto\Article;
 
-use App\Entity\User;
 use App\Validator\Constraints\UniqueTitle;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateArticleRequest implements ArticleRequestInterface
@@ -18,21 +16,17 @@ class CreateArticleRequest implements ArticleRequestInterface
             maxMessage: 'Le titre ne peut pas dépasser {{ limit }} caractères.'
         )]
         #[UniqueTitle('Le titre "{{ value }}" est déjà utilisé.')]
-        #[Groups(['article:write'])]
         private readonly ?string $title = null,
 
         #[Assert\NotBlank(message: 'Le contenu est requis.')]
-        #[Groups(['article:write'])]
         private readonly ?string $content = null,
 
-        #[Groups(['article:write'])]
         private readonly ?bool $enabled = null,
 
         #[Assert\NotBlank(message: 'L\'utilisateur est requis.')]
-        #[Groups(['article:write'])]
+        #[Assert\Positive(message: 'L\'utilisateur doit être un identifiant valide.')]
         private readonly ?int $userId = null,
 
-        #[Groups(['article:write'])]
         private readonly ?bool $enbaled = null,
     ) {
     }

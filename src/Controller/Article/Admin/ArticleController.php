@@ -3,6 +3,7 @@
 namespace App\Controller\Article\Admin;
 
 use App\Dto\Article\CreateArticleRequest;
+use App\Dto\Article\UpdateArticleRequest;
 use App\Entity\Article;
 use App\Mapper\ArticleMapper;
 use App\Repository\ArticleRepository;
@@ -112,5 +113,20 @@ final class ArticleController extends AbstractController
         $this->em->flush();
 
         return $this->json(['id' => $article->getId()], Response::HTTP_CREATED);
+    }
+
+    #[Route('/{id}', name: '_update', methods: ['PATCH'])]
+    public function update(
+        #[MapRequestPayload()]
+        UpdateArticleRequest $dto,
+        Article $article
+    ): JsonResponse {
+        $this->articleMapper->map($dto, $article);
+
+        $this->em->flush();
+
+        return $this->json($article, Response::HTTP_OK, [], [
+            'groups' => ['article:index', 'common:read'],
+        ]);
     }
 }

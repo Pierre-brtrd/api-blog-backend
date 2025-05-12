@@ -2,7 +2,9 @@
 
 namespace App\Validator\Constraints;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -11,6 +13,7 @@ class UniqueUsernameValidator extends ConstraintValidator
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -24,10 +27,21 @@ class UniqueUsernameValidator extends ConstraintValidator
             return;
         }
 
-        if ($this->userRepository->findOneBy(['username' => $value])) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $value)
-                ->addViolation();
+        $existing = $this->userRepository->findOneBy(['username' => $value]);
+
+        if (null === $existing) {
+            return;
         }
+
+        /** @var User $currentUser */
+        $currentUser = $this->security->getUser();
+
+        if (null !== $currentUser && $existing->getId() === $currentUser->getId()) {
+            return;
+        }
+
+        $this->context->buildViolation($constraint->message)
+            ->setParameter('{{ value }}', $value)
+            ->addViolation();
     }
 }

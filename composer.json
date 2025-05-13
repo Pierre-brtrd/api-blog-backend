@@ -1,6 +1,14 @@
 {
+    "name": "pierre-brtrd/api-blog-backend",
+    "description": "Symfony 7.2 API for a blog",
+    "keywords": [
+        "framework",
+        "symfony",
+        "api",
+        "blog"
+    ],
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {

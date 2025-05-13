@@ -2,6 +2,7 @@
 
 namespace App\Controller\Article\Admin;
 
+use App\Dto\Article\ArticleFilterDto;
 use App\Dto\Article\CreateArticleRequest;
 use App\Dto\Article\UpdateArticleRequest;
 use App\Entity\Article;
@@ -15,13 +16,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints\Image;
 
 #[OA\Tag(name: 'Article')]
-#[Route('/api/admin/article', name: 'api_article')]
+#[Route('/api/admin/articles', name: 'api_article')]
 final class ArticleController extends AbstractController
 {
     public function __construct(
@@ -51,10 +53,27 @@ final class ArticleController extends AbstractController
     )]
     #[Security(name: 'Bearer')]
     #[Route('', name: '_index', methods: ['GET'])]
-    public function index(): JsonResponse
-    {
+    public function index(
+        #[MapQueryString]
+        ArticleFilterDto $filterDto,
+    ): JsonResponse {
+        $articles = $this->articleRepository->findPaginate($filterDto);
+
+        $total = $this->articleRepository->countAll();
+        $pages = ceil($total / $filterDto->getLimit());
+
+        $data = [
+            'items' => $articles,
+            'meta' => [
+                'total' => $total,
+                'page' => $filterDto->getPage(),
+                'limit' => $filterDto->getLimit(),
+                'pages' => $pages,
+            ]
+        ];
+
         return $this->json(
-            $this->articleRepository->findAll(),
+            $data,
             Response::HTTP_OK,
             [],
             ['groups' => ['article:index', 'common:read']]

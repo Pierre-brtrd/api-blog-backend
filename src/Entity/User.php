@@ -38,6 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $lastName = null;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(['user:read'])]
     private array $roles = [];
 
     #[ORM\Column(type: 'string')]
@@ -47,7 +48,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Article>
      */
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'user')]
-    #[Groups(['user:read'])]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $articles;
 

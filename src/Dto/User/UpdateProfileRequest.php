@@ -6,7 +6,7 @@ use App\Validator\Constraints\UniqueUsername;
 use App\Validator\Constraints\ValidPasswordChange;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ValidPasswordChange]
+// #[ValidPasswordChange]
 class UpdateProfileRequest implements UserRequestInterface
 {
     public function __construct(
@@ -32,7 +32,6 @@ class UpdateProfileRequest implements UserRequestInterface
 
         public readonly ?string $currentPassword,
 
-        #[Assert\Length(min: 6, max: 4096)]
         public readonly ?string $plainPassword,
 
         public readonly ?string $confirmPassword,

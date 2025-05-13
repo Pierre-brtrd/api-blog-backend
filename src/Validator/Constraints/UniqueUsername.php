@@ -10,8 +10,11 @@ class UniqueUsername extends Constraint
 {
     public string $message = 'Le nom d’utilisateur "{{ value }}" est déjà utilisé.';
 
+    public bool $admin = false;
+
     public function __construct(
         ?string $message = null,
+        bool $admin = false,
         array $groups = null,
         array $payload = null,
     ) {
@@ -20,6 +23,8 @@ class UniqueUsername extends Constraint
         if (null !== $message) {
             $this->message = $message;
         }
+
+        $this->admin = $admin;
     }
 
     public function getTargets(): string

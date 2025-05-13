@@ -80,6 +80,18 @@ final class ArticleController extends AbstractController
         );
     }
 
+    #[Route('/{id}', name: '_show', methods: ['GET'])]
+    public function show(?Article $article): JsonResponse
+    {
+        if (!$article) {
+            return $this->json(['detail' => 'Article not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($article, Response::HTTP_OK, [], [
+            'groups' => ['article:index', 'common:read'],
+        ]);
+    }
+
     #[OA\Post(
         summary: 'Create an article',
         responses: [

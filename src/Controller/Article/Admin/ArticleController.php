@@ -22,8 +22,8 @@ use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints\Image;
 
-#[OA\Tag(name: 'Article')]
-#[Route('/api/admin/articles', name: 'api_article')]
+#[OA\Tag(name: 'Article - Admin')]
+#[Route('/api/admin/articles', name: 'api_admin_article')]
 final class ArticleController extends AbstractController
 {
     public function __construct(

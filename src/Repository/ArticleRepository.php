@@ -17,20 +17,34 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
-    public function countAll(): int
+    public function countAll(bool $includeDisabled = true): int
     {
-        return (int) $this->createQueryBuilder('a')
+        $query = $this->createQueryBuilder('a');
+
+        if (!$includeDisabled) {
+            $query->andWhere('a.enabled = :enabled')
+                ->setParameter('enabled', true);
+        }
+
+        return (int) $query
             ->select('COUNT(a.id)')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function findPaginate(ArticleFilterDto $filterDto): array
+    public function findPaginate(ArticleFilterDto $filterDto, bool $includeDisabled = true): array
     {
-        return $this->createQueryBuilder('a')
+        $query = $this->createQueryBuilder('a')
             ->setFirstResult(($filterDto->getPage() - 1) * $filterDto->getLimit())
             ->setMaxResults($filterDto->getLimit())
-            ->orderBy('a.createdAt', 'DESC')
+            ->orderBy('a.createdAt', 'DESC');
+
+        if (!$includeDisabled) {
+            $query->andWhere('a.enabled = :enabled')
+                ->setParameter('enabled', true);
+        }
+
+        return $query
             ->getQuery()
             ->getResult();
     }

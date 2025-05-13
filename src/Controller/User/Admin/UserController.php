@@ -3,6 +3,7 @@
 namespace App\Controller\User\Admin;
 
 use App\Dto\User\UpdateProfileRequest;
+use App\Dto\User\UserFilterDto;
 use App\Entity\User;
 use App\Mapper\UserMapper;
 use App\Repository\UserRepository;
@@ -13,6 +14,8 @@ use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -48,12 +51,26 @@ class UserController extends AbstractController
     )]
     #[Security(name: 'Bearer')]
     #[Route('', name: '_list', methods: ['GET'])]
-    public function list(): JsonResponse
-    {
-        $users = $this->userRepository->findAll();
+    public function list(
+        #[MapQueryString]
+        UserFilterDto $filtersDto,
+    ): JsonResponse {
+        $users = $this->userRepository->findPaginate($filtersDto);
+
+        $total = $this->userRepository->countAll();
+
+        $data = [
+            'items' => $users,
+            'meta' => [
+                'page' => $filtersDto->getPage(),
+                'limit' => $filtersDto->getLimit(),
+                'total' => $total,
+                'pages' => (int) ceil($total / $filtersDto->getLimit()),
+            ]
+        ];
 
         return $this->json(
-            $users,
+            $data,
             Response::HTTP_OK,
             [],
             ['groups' => ['user:read', 'common:read']]

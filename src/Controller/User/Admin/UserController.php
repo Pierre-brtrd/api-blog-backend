@@ -119,4 +119,23 @@ class UserController extends AbstractController
             ['groups' => ['user:read', 'common:read']]
         );
     }
+
+    #[Route('/{id}', name: '_delete', methods: ['DELETE'])]
+    public function delete(?User $user): JsonResponse
+    {
+        if (!$user) {
+            return $this->json(
+                ['message' => 'User not found'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+
+        return $this->json(
+            ['message' => 'User deleted successfully'],
+            Response::HTTP_NO_CONTENT
+        );
+    }
 }

@@ -1,6 +1,6 @@
 <p align="center">   <img src="https://img.shields.io/badge/Symfony-7.2-000000?logo=symfony" alt="Symfony 7" />   <img src="https://img.shields.io/badge/PHP-8.2-%23777BB4?logo=php" alt="PHP 8.2" />   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" />   <img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Status" /> </p>
 
-# MonAPI Symfony
+# API Symfony Blog - Formation
 
 > **MonAPI** est le back-end RESTful d’une application de gestion d’articles.
 >  Il expose des endpoints pour **CRUD** d’articles et gère l’upload d’images.
@@ -11,14 +11,12 @@
 
 ## 📋 Table des matières
 
-1. [Prérequis](#-prérequis)
-2. [Installation](#-installation)
-3. [Configuration](#-configuration)
-4. [Usage](#-usage)
-5. [Endpoints API](#-endpoints-api)
-6. [Tests](#-tests)
-7. [Contribution](#-contribution)
-8. [Licence](#-licence)
+1. [Prérequis](#%EF%B8%8F-prérequis)
+2. [Installation](#%EF%B8%8F-installation)
+3. [Usage](#-usage)
+4. [Endpoints API](#-endpoints-api)
+5. [Contribution](#-contribution)
+6. [Licence](#-licence)
 
 ------
 

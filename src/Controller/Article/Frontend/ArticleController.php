@@ -20,6 +20,22 @@ class ArticleController extends AbstractController
     ) {
     }
 
+    #[OA\Get(
+        summary: 'Get a list of articles',
+        description: 'Get a list of articles',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'List of articles',
+                content: new OA\JsonContent(
+                    type: 'array',
+                    items: new OA\Items(
+                        ref: '#/components/schemas/Article'
+                    )
+                )
+            ),
+        ],
+    )]
     #[Route('', name: '_index', methods: ['GET'])]
     public function index(
         #[MapQueryString]

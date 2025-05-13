@@ -80,6 +80,32 @@ final class ArticleController extends AbstractController
         );
     }
 
+    #[OA\Get(
+        summary: 'Get an article',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Article found',
+                content: new OA\JsonContent(
+                    ref: new Model(
+                        type: Article::class,
+                        groups: ['article:index', 'common:read']
+                    )
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Article not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'int'),
+                        new OA\Property(property: 'detail', type: 'string'),
+                    ],
+                ),
+            ),
+        ]
+    )]
+    #[Security(name: 'Bearer')]
     #[Route('/{id}', name: '_show', methods: ['GET'])]
     public function show(?Article $article): JsonResponse
     {
@@ -236,6 +262,44 @@ final class ArticleController extends AbstractController
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
+    #[OA\Post(
+        summary: 'Upload an image for an article',
+        responses: [
+            new OA\Response(
+                response: 204,
+                description: 'Image uploaded',
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Article not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'int'),
+                        new OA\Property(property: 'detail', type: 'string'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Validation error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'title', type: 'string', example: 'Validation Error'),
+                        new OA\Property(property: 'detail', type: 'string'),
+                        new OA\Property(property: 'status', type: 'number', example: 422),
+                        new OA\Property(property: 'violations', type: 'array', items: new OA\Items(
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'propertyPath', type: 'string'),
+                                new OA\Property(property: 'title', type: 'string'),
+                            ],
+                        )),
+                    ],
+                ),
+            ),
+        ]
+    )]
+    #[Security(name: 'Bearer')]
     #[Route('/{id}/upload', name: '_upload', methods: ['POST'])]
     public function uploadFile(
         Article $article,
@@ -264,6 +328,32 @@ final class ArticleController extends AbstractController
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
+    #[OA\Get(
+        summary: 'Switch an article',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Article switched',
+                content: new OA\JsonContent(
+                    ref: new Model(
+                        type: Article::class,
+                        groups: ['article:index', 'common:read']
+                    )
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Article not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'int'),
+                        new OA\Property(property: 'detail', type: 'string'),
+                    ],
+                ),
+            ),
+        ]
+    )]
+    #[Security(name: 'Bearer')]
     #[Route('/{id}/switch', name: '_switch', methods: ['GET'])]
     public function swicth(?Article $article): JsonResponse
     {

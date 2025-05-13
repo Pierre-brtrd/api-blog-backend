@@ -14,7 +14,6 @@ use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
@@ -49,7 +48,6 @@ class UserController extends AbstractController
             ),
         ],
     )]
-    #[Security(name: 'Bearer')]
     #[Route('', name: '_list', methods: ['GET'])]
     public function list(
         #[MapQueryString]
@@ -92,7 +90,6 @@ class UserController extends AbstractController
             ),
         ],
     )]
-    #[Security(name: 'Bearer')]
     #[Route('/{id}', name: '_show', methods: ['GET'])]
     public function show(?User $user): JsonResponse
     {
@@ -111,6 +108,30 @@ class UserController extends AbstractController
         );
     }
 
+    #[OA\Patch(
+        summary: 'Update a user by ID',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'User updated successfully',
+                content: new OA\JsonContent(
+                    ref: new Model(
+                        type: User::class,
+                        groups: ['user:read', 'common:read']
+                    )
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'User not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string')
+                    ]
+                )
+            ),
+        ],
+    )]
     #[Route('/{id}', name: '_update', methods: ['PATCH'])]
     public function update(
         #[MapRequestPayload]
@@ -137,6 +158,24 @@ class UserController extends AbstractController
         );
     }
 
+    #[OA\Delete(
+        summary: 'Delete a user by ID',
+        responses: [
+            new OA\Response(
+                response: 204,
+                description: 'User deleted successfully'
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'User not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string')
+                    ]
+                )
+            ),
+        ],
+    )]
     #[Route('/{id}', name: '_delete', methods: ['DELETE'])]
     public function delete(?User $user): JsonResponse
     {

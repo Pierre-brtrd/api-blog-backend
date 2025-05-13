@@ -80,7 +80,6 @@ final class ArticleController extends AbstractController
         );
     }
 
-
     #[OA\Post(
         summary: 'Create an article',
         responses: [
@@ -251,5 +250,21 @@ final class ArticleController extends AbstractController
         $this->em->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/{id}/switch', name: '_switch', methods: ['GET'])]
+    public function swicth(?Article $article): JsonResponse
+    {
+        if (!$article) {
+            return $this->json(['detail' => 'Aritcle non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+
+        $article->setEnabled(!$article->isEnabled());
+
+        $this->em->flush();
+
+        return $this->json($article, Response::HTTP_OK, [], [
+            'groups' => ['article:index', 'common:read'],
+        ]);
     }
 }

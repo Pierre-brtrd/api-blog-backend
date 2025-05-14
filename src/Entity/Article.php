@@ -56,6 +56,10 @@ class Article
     #[ORM\Column(nullable: true)]
     private ?int $imageSize = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(['article:index', 'article:index:user'])]
+    private ?string $shortContent = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -143,5 +147,17 @@ class Article
     public function getImageSize(): ?int
     {
         return $this->imageSize;
+    }
+
+    public function getShortContent(): ?string
+    {
+        return $this->shortContent;
+    }
+
+    public function setShortContent(string $shortContent): static
+    {
+        $this->shortContent = $shortContent;
+
+        return $this;
     }
 }

@@ -19,6 +19,8 @@ class UpdateArticleRequest implements ArticleRequestInterface
 
         private readonly ?string $content = null,
 
+        private readonly ?string $shortContent = null,
+
         private readonly ?bool $enabled = null,
 
         #[Assert\Positive(message: 'L\'utilisateur doit être un identifiant valide.')]
@@ -36,6 +38,11 @@ class UpdateArticleRequest implements ArticleRequestInterface
     public function getContent(): ?string
     {
         return $this->content;
+    }
+
+    public function getShortContent(): ?string
+    {
+        return $this->shortContent;
     }
 
     public function getUserId(): ?int

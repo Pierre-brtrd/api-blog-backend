@@ -21,6 +21,15 @@ class CreateArticleRequest implements ArticleRequestInterface
         #[Assert\NotBlank(message: 'Le contenu est requis.')]
         private readonly ?string $content = null,
 
+        #[Assert\NotBlank(message: 'Le contenu court est obligatoire.')]
+        #[Assert\Length(
+            min: 2,
+            max: 255,
+            minMessage: 'Le contenu court doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Le contenu court ne peut pas dépasser {{ limit }} caractères.'
+        )]
+        private readonly ?string $shortContent = null,
+
         private readonly ?bool $enabled = null,
 
         #[Assert\NotBlank(message: 'L\'utilisateur est requis.')]
@@ -39,6 +48,11 @@ class CreateArticleRequest implements ArticleRequestInterface
     public function getContent(): ?string
     {
         return $this->content;
+    }
+
+    public function getShortContent(): ?string
+    {
+        return $this->shortContent;
     }
 
     public function getUserId(): ?int

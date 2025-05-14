@@ -4,9 +4,7 @@ namespace App\Mapper;
 
 use App\Dto\Article\ArticleRequestInterface;
 use App\Entity\Article;
-use App\Entity\User;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ArticleMapper
@@ -26,6 +24,10 @@ class ArticleMapper
 
         if (null !== $dto->getContent()) {
             $article->setContent($dto->getContent());
+        }
+
+        if (null !== $dto->getShortContent()) {
+            $article->setShortContent($dto->getShortContent());
         }
 
         if (null !== $dto->isEnabled()) {

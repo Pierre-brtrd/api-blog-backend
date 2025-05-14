@@ -54,9 +54,21 @@ class ArticleRepository extends ServiceEntityRepository
                 ->setParameter('enabled', true);
         }
 
-        return $query
+        $query = $query
             ->getQuery()
             ->getResult();
+
+        $total = $filterDto->getSearch() ? count($query) : $this->countAll($includeDisabled);
+
+        return [
+            'items' => $query,
+            'meta' => [
+                'page' => $filterDto->getPage(),
+                'limit' => $filterDto->getLimit(),
+                'total' => $total,
+                'pages' => ceil($total / $filterDto->getLimit()),
+            ],
+        ];
     }
 
     //    /**

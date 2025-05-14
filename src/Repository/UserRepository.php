@@ -61,9 +61,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('search', '%' . $userFilterDto->getSearch() . '%');
         }
 
-        return $query
+        $query = $query
             ->getQuery()
             ->getResult();
+
+        $total = $userFilterDto->getSearch() ? count($query) : $this->countAll();
+
+        return [
+            'items' => $query,
+            'meta' => [
+                'page' => $userFilterDto->getPage(),
+                'limit' => $userFilterDto->getLimit(),
+                'total' => $total,
+                'pages' => ceil($total / $userFilterDto->getLimit()),
+            ],
+        ];
     }
 
     //    /**

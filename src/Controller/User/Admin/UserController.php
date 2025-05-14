@@ -53,22 +53,8 @@ class UserController extends AbstractController
         #[MapQueryString]
         UserFilterDto $filtersDto,
     ): JsonResponse {
-        $users = $this->userRepository->findPaginate($filtersDto);
-
-        $total = $this->userRepository->countAll();
-
-        $data = [
-            'items' => $users,
-            'meta' => [
-                'page' => $filtersDto->getPage(),
-                'limit' => $filtersDto->getLimit(),
-                'total' => $total,
-                'pages' => (int) ceil($total / $filtersDto->getLimit()),
-            ]
-        ];
-
         return $this->json(
-            $data,
+            $this->userRepository->findPaginate($filtersDto),
             Response::HTTP_OK,
             [],
             ['groups' => ['user:read', 'common:read']]

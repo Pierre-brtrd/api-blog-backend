@@ -57,23 +57,8 @@ final class ArticleController extends AbstractController
         #[MapQueryString]
         ArticleFilterDto $filterDto,
     ): JsonResponse {
-        $articles = $this->articleRepository->findPaginate($filterDto);
-
-        $total = $this->articleRepository->countAll();
-        $pages = ceil($total / $filterDto->getLimit());
-
-        $data = [
-            'items' => $articles,
-            'meta' => [
-                'total' => $total,
-                'page' => $filterDto->getPage(),
-                'limit' => $filterDto->getLimit(),
-                'pages' => $pages,
-            ]
-        ];
-
         return $this->json(
-            $data,
+            $this->articleRepository->findPaginate($filterDto),
             Response::HTTP_OK,
             [],
             ['groups' => ['article:index', 'common:read']]

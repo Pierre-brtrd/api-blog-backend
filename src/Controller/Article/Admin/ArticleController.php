@@ -99,7 +99,7 @@ final class ArticleController extends AbstractController
         }
 
         return $this->json($article, Response::HTTP_OK, [], [
-            'groups' => ['article:index', 'common:read'],
+            'groups' => ['article:index', 'article:show', 'common:read'],
         ]);
     }
 

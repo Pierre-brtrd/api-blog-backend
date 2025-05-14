@@ -2,6 +2,7 @@
 
 namespace App\Controller\Media;
 
+use App\Dto\Media\MediaFilterDto;
 use App\Entity\Media;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints\Image;
@@ -108,10 +110,12 @@ class MediaController extends AbstractController
     )]
     #[Security(name: 'Bearer')]
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(): JsonResponse
-    {
+    public function index(
+        #[MapQueryString]
+        MediaFilterDto $mediaFilterDto
+    ): JsonResponse {
         return $this->json(
-            $this->mediaRepository->findAll(),
+            $this->mediaRepository->findPaginate($mediaFilterDto),
             Response::HTTP_OK,
             [],
             [

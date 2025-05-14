@@ -33,7 +33,7 @@ class Article
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['article:index', 'article:index:user'])]
+    #[Groups(['article:show', 'article:index:user'])]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
@@ -57,7 +57,7 @@ class Article
     private ?int $imageSize = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:index', 'article:index:user'])]
+    #[Groups(['article:index', 'article:show', 'article:index:user'])]
     private ?string $shortContent = null;
 
     public function getId(): ?int

@@ -3,9 +3,11 @@
 namespace App\Controller\Article\Frontend;
 
 use App\Dto\Article\ArticleFilterDto;
+use App\Entity\Article;
 use App\Entity\User;
 use App\Repository\ArticleRepository;
 use OpenApi\Attributes as OA;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,6 +85,47 @@ class ArticleController extends AbstractController
             [],
             [
                 'groups' => ['article:index:user', 'common:read'],
+            ]
+        );
+    }
+
+    #[OA\Get(
+        summary: 'Get an article by slug',
+        description: 'Get an article by slug',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Article found',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/Article'
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Article not found'
+            ),
+        ],
+    )]
+    #[Route('/{slug}', name: '_show', methods: ['GET'])]
+    public function show(
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        ?Article $article
+    ): JsonResponse {
+        if (!$article) {
+            return $this->json(
+                [
+                    'message' => 'Article not found',
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+        return $this->json(
+            $article,
+            Response::HTTP_OK,
+            [],
+            [
+                'groups' => ['article:index', 'article:show', 'common:read'],
             ]
         );
     }

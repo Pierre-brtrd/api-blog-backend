@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\Article\ArticleFilterDto;
 use App\Entity\Article;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -59,6 +60,47 @@ class ArticleRepository extends ServiceEntityRepository
             ->getResult();
 
         $total = $filterDto->getSearch() ? count($query) : $this->countAll($includeDisabled);
+
+        return [
+            'items' => $query,
+            'meta' => [
+                'page' => $filterDto->getPage(),
+                'limit' => $filterDto->getLimit(),
+                'total' => $total,
+                'pages' => ceil($total / $filterDto->getLimit()),
+            ],
+        ];
+    }
+
+    public function findPaginateByUser(ArticleFilterDto $filterDto, User $user, bool $includeDisabled = true): array
+    {
+        $query = $this->createQueryBuilder('a')
+            ->setFirstResult(($filterDto->getPage() - 1) * $filterDto->getLimit())
+            ->setMaxResults($filterDto->getLimit())
+            ->join('a.user', 'u', 'WITH', 'u.id = :userId')
+            ->setParameter('userId', $user->getId());
+
+        if ($filterDto->getSort() && $filterDto->getOrder()) {
+            $query->orderBy('a.' . $filterDto->getSort(), $filterDto->getOrder());
+        } else {
+            $query->orderBy('a.createdAt', 'DESC');
+        }
+
+        if ($filterDto->getSearch()) {
+            $query->andWhere('a.title LIKE :search OR a.content LIKE :search')
+                ->setParameter('search', '%' . $filterDto->getSearch() . '%');
+        }
+
+        if (!$includeDisabled) {
+            $query->andWhere('a.enabled = :enabled')
+                ->setParameter('enabled', true);
+        }
+
+        $query = $query
+            ->getQuery()
+            ->getResult();
+
+        $total = count($query);
 
         return [
             'items' => $query,

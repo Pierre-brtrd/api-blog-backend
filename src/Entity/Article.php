@@ -25,15 +25,15 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:index', 'user:read'])]
+    #[Groups(['article:index', 'article:index:user', 'user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:index', 'user:read'])]
+    #[Groups(['article:index', 'article:index:user', 'user:read'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['article:index'])]
+    #[Groups(['article:index', 'article:index:user'])]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
@@ -43,14 +43,14 @@ class Article
 
     #[ORM\Column(length: 255)]
     #[Gedmo\Slug(fields: ['title'])]
-    #[Groups(['article:index', 'user:read'])]
+    #[Groups(['article:index', 'article:index:user', 'user:read'])]
     private ?string $slug = null;
 
     #[Vich\UploadableField(mapping: 'article_images', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['article:index'])]
+    #[Groups(['article:index', 'article:index:user',])]
     private ?string $imageName = null;
 
     #[ORM\Column(nullable: true)]

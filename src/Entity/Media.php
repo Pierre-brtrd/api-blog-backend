@@ -6,6 +6,7 @@ use App\Entity\Traits\DateTimeTrait;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
@@ -18,15 +19,18 @@ class Media
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['media:index'])]
     private ?int $id = null;
 
     #[Vich\UploadableField(mapping: 'media_file', fileNameProperty: 'mediaName', size: 'mediaSize')]
     private ?File $mediaFile = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['media:index'])]
     private ?string $mediaName = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['media:index'])]
     private ?int $mediaSize = null;
 
     public function getId(): ?int

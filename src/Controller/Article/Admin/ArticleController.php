@@ -59,7 +59,7 @@ final class ArticleController extends AbstractController
     ): JsonResponse {
         $articles = $this->articleRepository->findPaginate($filterDto);
 
-        $total = count($articles);
+        $total = $this->articleRepository->countAll();
         $pages = ceil($total / $filterDto->getLimit());
 
         $data = [

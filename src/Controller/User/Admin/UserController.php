@@ -55,7 +55,7 @@ class UserController extends AbstractController
     ): JsonResponse {
         $users = $this->userRepository->findPaginate($filtersDto);
 
-        $total = $this->userRepository->countAll();
+        $total = count($users);
 
         $data = [
             'items' => $users,

@@ -46,10 +46,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $offset = ($userFilterDto->getPage() - 1) * $userFilterDto->getLimit();
 
-        return $this->createQueryBuilder('u')
-            ->orderBy('u.createdAt', 'DESC')
+        $query = $this->createQueryBuilder('u')
             ->setFirstResult($offset)
-            ->setMaxResults($userFilterDto->getLimit())
+            ->setMaxResults($userFilterDto->getLimit());
+
+        if ($userFilterDto->getSort() && $userFilterDto->getOrder()) {
+            $query->orderBy('u.' . $userFilterDto->getSort(), $userFilterDto->getOrder());
+        } else {
+            $query->orderBy('u.createdAt', 'DESC');
+        }
+
+        if ($userFilterDto->getSearch()) {
+            $query->andWhere('u.username LIKE :search OR u.firstName LIKE :search OR u.lastName LIKE :search')
+                ->setParameter('search', '%' . $userFilterDto->getSearch() . '%');
+        }
+
+        return $query
             ->getQuery()
             ->getResult();
     }

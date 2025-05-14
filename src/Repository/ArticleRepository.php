@@ -36,8 +36,18 @@ class ArticleRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('a')
             ->setFirstResult(($filterDto->getPage() - 1) * $filterDto->getLimit())
-            ->setMaxResults($filterDto->getLimit())
-            ->orderBy('a.createdAt', 'DESC');
+            ->setMaxResults($filterDto->getLimit());
+
+        if ($filterDto->getSort() && $filterDto->getOrder()) {
+            $query->orderBy('a.' . $filterDto->getSort(), $filterDto->getOrder());
+        } else {
+            $query->orderBy('a.createdAt', 'DESC');
+        }
+
+        if ($filterDto->getSearch()) {
+            $query->andWhere('a.title LIKE :search OR a.content LIKE :search')
+                ->setParameter('search', '%' . $filterDto->getSearch() . '%');
+        }
 
         if (!$includeDisabled) {
             $query->andWhere('a.enabled = :enabled')

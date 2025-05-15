@@ -33,8 +33,7 @@ class UserMapper
             $user->setPassword($hashed);
         }
 
-        /** @var UserRequestInterface|UpdateAdminUpdateRequest $dto */
-        if (null !== $dto->getRoles()) {
+        if ($dto instanceof UpdateAdminUpdateRequest && null !== $dto->getRoles()) {
             $user->setRoles($dto->getRoles());
         }
 

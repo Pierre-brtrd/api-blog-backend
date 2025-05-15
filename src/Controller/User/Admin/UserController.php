@@ -2,7 +2,7 @@
 
 namespace App\Controller\User\Admin;
 
-use App\Dto\User\UpdateProfileRequest;
+use App\Dto\User\UpdateAdminUpdateRequest;
 use App\Dto\User\UserFilterDto;
 use App\Entity\User;
 use App\Mapper\UserMapper;
@@ -121,7 +121,7 @@ class UserController extends AbstractController
     #[Route('/{id}', name: '_update', methods: ['PATCH'])]
     public function update(
         #[MapRequestPayload]
-        UpdateProfileRequest $dto,
+        UpdateAdminUpdateRequest $dto,
         ?User $user,
     ): JsonResponse {
         if (!$user) {

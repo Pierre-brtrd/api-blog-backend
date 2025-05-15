@@ -2,6 +2,7 @@
 
 namespace App\Mapper;
 
+use App\Dto\User\UpdateAdminUpdateRequest;
 use App\Dto\User\UserRequestInterface;
 use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -30,6 +31,11 @@ class UserMapper
         if (null !== $dto->getPlainPassword()) {
             $hashed = $this->hasher->hashPassword($user, $dto->getPlainPassword());
             $user->setPassword($hashed);
+        }
+
+        /** @var UserRequestInterface|UpdateAdminUpdateRequest $dto */
+        if (null !== $dto->getRoles()) {
+            $user->setRoles($dto->getRoles());
         }
 
         return $user;
